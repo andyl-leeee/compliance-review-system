@@ -1,0 +1,2492 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>保健食品廣告法規合規審查系統</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F6F3;
+    --surface: #FFFFFF;
+    --surface2: #F0EEE9;
+    --border: #E2DDD6;
+    --border2: #CCC8BF;
+    --text: #1C1A17;
+    --text2: #5A5650;
+    --text3: #9A9590;
+    --accent: #1A4B8C;
+    --accent2: #2A63B8;
+    --accent-light: #EBF0FA;
+    --green: #1C6B45;
+    --green-bg: #E9F5EE;
+    --red: #AE2C2C;
+    --red-bg: #FAF0F0;
+    --yellow: #7A5F00;
+    --yellow-bg: #FDF8E8;
+    --purple: #5B3A9A;
+    --purple-bg: #F4F0FB;
+    --shadow: 0 1px 4px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.04);
+    --shadow2: 0 2px 8px rgba(0,0,0,.12), 0 8px 32px rgba(0,0,0,.06);
+    --radius: 10px;
+    --radius2: 6px;
+    --sidebar: 230px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── 設定區塊 ── */
+  #config-banner {
+    background: linear-gradient(135deg, #1A4B8C, #2A63B8);
+    color: white;
+    padding: 12px 20px;
+    text-align: center;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  #config-banner a { color: #90C4FF; cursor: pointer; text-decoration: underline; }
+  #config-banner.hidden { display: none; }
+
+  /* ── 登入頁 ── */
+  #login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #F7F6F3 0%, #EAE6DF 100%);
+  }
+  .login-card {
+    background: white;
+    border-radius: 16px;
+    padding: 48px 40px;
+    width: 380px;
+    box-shadow: var(--shadow2);
+    border: 1px solid var(--border);
+  }
+  .login-logo {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .login-logo-icon {
+    width: 52px;
+    height: 52px;
+    background: var(--accent);
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+  .login-logo h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.3px;
+  }
+  .login-logo p {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+  .form-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius2);
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    transition: border-color .15s, box-shadow .15s;
+    outline: none;
+  }
+  .form-input:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 3px rgba(42,99,184,.1);
+    background: white;
+  }
+  .login-demo-accounts {
+    margin-top: 20px;
+    background: var(--surface2);
+    border-radius: var(--radius2);
+    padding: 12px;
+    font-size: 11px;
+    color: var(--text2);
+  }
+  .login-demo-accounts strong { display: block; margin-bottom: 6px; color: var(--text); }
+  .demo-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    cursor: pointer;
+  }
+  .demo-row:hover { color: var(--accent); }
+  .demo-tag {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+
+  /* ── 主佈局 ── */
+  #app { display: none; min-height: 100vh; }
+  #app.visible { display: flex; }
+
+  .sidebar {
+    width: var(--sidebar);
+    background: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0; top: 0;
+    z-index: 100;
+  }
+  .sidebar-logo {
+    padding: 20px 16px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .sidebar-logo-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--accent2);
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    margin-bottom: 6px;
+  }
+  .sidebar-logo h2 {
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 0.2px;
+    line-height: 1.4;
+  }
+  .sidebar-logo p { font-size: 10px; color: rgba(255,255,255,.4); margin-top: 1px; }
+
+  .sidebar-section {
+    padding: 8px;
+    flex: 1;
+  }
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,.3);
+    letter-spacing: 1px;
+    padding: 8px 8px 4px;
+    text-transform: uppercase;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    color: rgba(255,255,255,.6);
+    font-size: 13px;
+    font-weight: 500;
+    transition: background .15s, color .15s;
+    user-select: none;
+  }
+  .nav-item:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.9); }
+  .nav-item.active { background: var(--accent2); color: white; }
+  .nav-item .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .sidebar-user {
+    padding: 12px 8px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    margin: 8px;
+  }
+  .sidebar-user-info {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 8px;
+  }
+  .user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--accent2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+  .user-name { font-size: 12px; font-weight: 600; color: white; }
+  .user-role { font-size: 10px; color: rgba(255,255,255,.4); }
+  .btn-logout {
+    width: 100%;
+    padding: 7px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 6px;
+    color: rgba(255,255,255,.5);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .15s;
+  }
+  .btn-logout:hover { background: rgba(255,255,255,.1); }
+
+  /* ── 主內容 ── */
+  .main-content {
+    margin-left: var(--sidebar);
+    flex: 1;
+    padding: 28px 32px;
+    max-width: calc(100vw - var(--sidebar));
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-header {
+    margin-bottom: 24px;
+  }
+  .page-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.4px;
+  }
+  .page-header p {
+    font-size: 13px;
+    color: var(--text2);
+    margin-top: 3px;
+  }
+  .page-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  /* ── 按鈕 ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border-radius: var(--radius2);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    border: none;
+    outline: none;
+    white-space: nowrap;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-outline {
+    background: white;
+    color: var(--text);
+    border: 1.5px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--border2); background: var(--surface2); }
+  .btn-danger {
+    background: var(--red-bg);
+    color: var(--red);
+    border: 1.5px solid #EAA0A0;
+  }
+  .btn-danger:hover { background: #F5E0E0; }
+  .btn-success {
+    background: var(--green-bg);
+    color: var(--green);
+    border: 1.5px solid #9ACDB3;
+  }
+  .btn-success:hover { background: #D6EFDF; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+  /* ── 卡片 ── */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .card-body { padding: 20px; }
+
+  /* ── 統計卡 ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+  }
+  .stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .stat-value.accent { color: var(--accent); }
+  .stat-value.green { color: var(--green); }
+  .stat-value.red { color: var(--red); }
+  .stat-value.yellow { color: var(--yellow); }
+
+  /* ── 狀態標籤 ── */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .status-draft { background: #F5F5F5; color: #888; }
+  .status-ai_reviewing { background: var(--purple-bg); color: var(--purple); }
+  .status-ai_rejected { background: var(--red-bg); color: var(--red); }
+  .status-pending_human { background: var(--yellow-bg); color: var(--yellow); }
+  .status-approved { background: var(--green-bg); color: var(--green); }
+  .status-rejected { background: var(--red-bg); color: var(--red); }
+
+  /* ── 風險標籤 ── */
+  .risk-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .risk-high { background: var(--red-bg); color: var(--red); border: 1px solid #EAA0A0; }
+  .risk-medium { background: var(--yellow-bg); color: var(--yellow); border: 1px solid #DFC870; }
+  .risk-low { background: #EAF2FF; color: #1A5276; border: 1px solid #7CAFD6; }
+  .risk-pass { background: var(--green-bg); color: var(--green); border: 1px solid #9ACDB3; }
+
+  /* ── 文案分類標籤 ── */
+  .copy-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── 表格 ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: 0.5px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    text-transform: uppercase;
+  }
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    font-size: 13px;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+  .table-link {
+    color: var(--accent);
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .table-link:hover { text-decoration: underline; }
+
+  /* ── 表單 ── */
+  .form-section {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .form-section h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group.full { grid-column: 1 / -1; }
+  select.form-input { cursor: pointer; }
+  textarea.form-input { resize: vertical; min-height: 120px; }
+  .form-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
+  .required { color: var(--red); }
+
+  /* ── 分頁器 ── */
+  .section-tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-tab {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all .15s;
+  }
+  .section-tab:hover { color: var(--text); }
+  .section-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── AI 分析結果 ── */
+  .ai-result-panel {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .ai-result-header {
+    padding: 14px 18px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .ai-result-header h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .ai-result-body { padding: 18px; }
+
+  .flag-item {
+    border: 1px solid var(--border);
+    border-radius: var(--radius2);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .flag-item-high { border-left: 3px solid var(--red); }
+  .flag-item-medium { border-left: 3px solid #DFC870; }
+  .flag-item-low { border-left: 3px solid #7CAFD6; }
+  .flag-term {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .flag-reason { font-size: 12px; color: var(--text2); margin-bottom: 4px; }
+  .flag-suggestion { font-size: 12px; color: var(--green); font-weight: 600; }
+  .flag-meta { font-size: 11px; color: var(--text3); margin-top: 6px; }
+
+  .highlighted-text {
+    line-height: 2;
+    font-size: 14px;
+    background: var(--surface2);
+    border-radius: var(--radius2);
+    padding: 16px;
+    border: 1px solid var(--border);
+  }
+
+  /* ── 審核決定區塊 ── */
+  .decision-panel {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-top: 20px;
+  }
+  .decision-panel h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .decision-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+  }
+  .action-card {
+    flex: 1;
+    min-width: 140px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .action-card:hover { border-color: var(--border2); background: var(--surface2); }
+  .action-card.selected-approve { border-color: var(--green); background: var(--green-bg); }
+  .action-card.selected-reject { border-color: var(--red); background: var(--red-bg); }
+  .action-icon { font-size: 20px; margin-bottom: 4px; }
+  .action-label { font-size: 13px; font-weight: 700; }
+  .action-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* ── 通知提示 ── */
+  .toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .toast {
+    background: var(--text);
+    color: white;
+    padding: 12px 16px;
+    border-radius: var(--radius2);
+    font-size: 13px;
+    box-shadow: var(--shadow2);
+    animation: slideIn .2s ease;
+    max-width: 320px;
+  }
+  .toast.success { background: var(--green); }
+  .toast.error { background: var(--red); }
+  .toast.warning { background: #8B6914; }
+  @keyframes slideIn { from { opacity:0; transform: translateY(-8px); } to { opacity:1; transform: translateY(0); } }
+
+  /* ── Loading ── */
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9998;
+    backdrop-filter: blur(4px);
+  }
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── AI 分析 Loading ── */
+  .ai-loading {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .ai-loading-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  .ai-loading-progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--purple));
+    border-radius: 2px;
+    animation: progress 2s ease-in-out infinite alternate;
+  }
+  @keyframes progress { from { width: 10%; } to { width: 90%; } }
+
+  /* ── 模態框 ── */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(3px);
+  }
+  .modal {
+    background: white;
+    border-radius: 12px;
+    padding: 28px;
+    width: 480px;
+    max-width: 92vw;
+    box-shadow: var(--shadow2);
+  }
+  .modal h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .modal p { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+  /* ── 設定頁 ── */
+  .settings-section {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .settings-section-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* ── 審查員負荷條 ── */
+  .load-bar-wrap { margin-bottom: 10px; }
+  .load-bar-info { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 12px; }
+  .load-bar { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .load-bar-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width .4s; }
+  .load-bar-fill.heavy { background: var(--yellow); }
+  .load-bar-fill.danger { background: var(--red); }
+
+  /* ── 空白狀態 ── */
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text3);
+  }
+  .empty-icon { font-size: 36px; margin-bottom: 10px; }
+  .empty-title { font-size: 14px; font-weight: 600; color: var(--text2); }
+  .empty-desc { font-size: 12px; margin-top: 4px; }
+
+  /* ── 詳情頁 ── */
+  .detail-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .detail-meta span { display: flex; align-items: center; gap: 4px; }
+
+  .info-row {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    gap: 16px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { width: 100px; color: var(--text3); font-weight: 600; flex-shrink: 0; }
+  .info-value { color: var(--text); }
+
+  /* ── 配置說明 ── */
+  .config-card {
+    background: linear-gradient(135deg, #EBF0FA, #F4F0FB);
+    border: 1px solid #C5D8F0;
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .config-card h3 { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 10px; }
+  .config-card p { font-size: 12px; color: var(--text2); line-height: 1.8; }
+  .config-card code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: rgba(26,75,140,.1);
+    color: var(--accent);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .config-input-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    align-items: flex-end;
+  }
+  .config-input-row .form-group { flex: 1; margin-bottom: 0; }
+
+  .chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--text2);
+  }
+
+  .overdue-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--red-bg);
+    border: 1px solid #EAA0A0;
+    border-radius: var(--radius2);
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+  .overdue-item strong { color: var(--red); }
+
+  @media (max-width: 768px) {
+    :root { --sidebar: 0px; }
+    .sidebar { display: none; }
+    .main-content { margin-left: 0; padding: 16px; max-width: 100vw; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 設定提示 -->
+<div id="config-banner">
+  ⚙️ 尚未設定 Google Sheets 連接。請先
+  <a onclick="showConfigModal()">點此設定 Google Apps Script URL</a>
+  以啟用資料儲存功能。（未設定時使用本地模擬模式）
+</div>
+
+<!-- 設定模態 -->
+<div id="config-modal" class="modal-backdrop" style="display:none;">
+  <div class="modal">
+    <h3>⚙️ Google Sheets 連接設定</h3>
+    <p>請建立 Google Apps Script 並部署為 Web App，然後貼上 URL。</p>
+    <div class="config-card">
+      <h3>📋 設定步驟</h3>
+      <p>
+        1. 開啟 <a href="https://script.google.com" target="_blank" style="color:var(--accent)">Google Apps Script</a><br>
+        2. 建立新專案，貼上下方提供的程式碼<br>
+        3. 建立 Google Sheet 並複製試算表 ID<br>
+        4. 部署 → 新部署 → 網頁應用程式<br>
+        5. 執行身份選「我」，存取權選「所有人」<br>
+        6. 複製部署 URL 貼到下方
+      </p>
+    </div>
+    <div class="form-group">
+      <label>Google Apps Script 部署 URL</label>
+      <input class="form-input" id="gas-url-input" placeholder="https://script.google.com/macros/s/..." />
+    </div>
+    <div class="form-group">
+      <label>Google Sheets 試算表 ID（可選，用於直接確認）</label>
+      <input class="form-input" id="sheet-id-input" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeConfigModal()">取消</button>
+      <button class="btn btn-outline" onclick="downloadGasScript()" style="color:var(--purple)">📥 下載 GAS 程式碼</button>
+      <button class="btn btn-primary" onclick="saveConfig()">💾 儲存設定</button>
+    </div>
+  </div>
+</div>
+
+<!-- 登入頁 -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">🛡️</div>
+      <h1>保健食品廣告法規<br>合規審查系統</h1>
+      <p>v4.0 · 串接 Google Sheets</p>
+    </div>
+    <div class="form-group">
+      <label>電子郵件</label>
+      <input class="form-input" id="login-email" type="email" placeholder="輸入 Email" />
+    </div>
+    <div class="form-group">
+      <label>密碼</label>
+      <input class="form-input" id="login-password" type="password" placeholder="輸入密碼" />
+    </div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;" onclick="doLogin()">登入</button>
+    <div class="login-demo-accounts">
+      <strong>🧪 測試帳號（點選快速填入）</strong>
+      <div class="demo-row" onclick="fillLogin('alice@co.com','pm123')">
+        <span>alice@co.com / pm123</span>
+        <span class="demo-tag">PM</span>
+      </div>
+      <div class="demo-row" onclick="fillLogin('carol@co.com','rev123')">
+        <span>carol@co.com / rev123</span>
+        <span class="demo-tag">法規人員</span>
+      </div>
+      <div class="demo-row" onclick="fillLogin('david@co.com','rev123')">
+        <span>david@co.com / rev123</span>
+        <span class="demo-tag">主管文案</span>
+      </div>
+      <div class="demo-row" onclick="fillLogin('eve@co.com','adm123')">
+        <span>eve@co.com / adm123</span>
+        <span class="demo-tag">管理者</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 主應用 -->
+<div id="app">
+  <!-- 側邊欄 -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">🛡️</div>
+      <h2>合規審查系統</h2>
+      <p>v4.0</p>
+    </div>
+    <div class="sidebar-section" id="sidebar-nav"></div>
+    <div class="sidebar-user">
+      <div class="sidebar-user-info">
+        <div class="user-avatar" id="user-avatar-text">A</div>
+        <div>
+          <div class="user-name" id="sidebar-username">-</div>
+          <div class="user-role" id="sidebar-userrole">-</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">登出</button>
+    </div>
+  </div>
+
+  <!-- 主內容 -->
+  <div class="main-content">
+
+    <!-- PM：提交文案 -->
+    <div class="page" id="page-pm-submit">
+      <div class="page-header">
+        <h1>提交新文案</h1>
+        <p>填寫文案資訊並送 AI 初步合規審查</p>
+      </div>
+      <div class="form-section">
+        <h3>📝 基本資訊</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>文案標題 <span class="required">*</span></label>
+            <input class="form-input" id="sub-title" placeholder="例：葉黃素膠囊 5月活動貼文" />
+          </div>
+          <div class="form-group">
+            <label>文案分類 <span class="required">*</span></label>
+            <select class="form-input" id="sub-copy-type">
+              <option value="">請選擇分類</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>產品類型 <span class="required">*</span></label>
+            <select class="form-input" id="sub-product-type">
+              <option value="">請選擇</option>
+              <option value="food">一般保健食品</option>
+              <option value="health_food">健康食品（小綠人）</option>
+              <option value="cosmetic">化粧品</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>是否為重送</label>
+            <input class="form-input" id="sub-resubmit-note" placeholder="（選填）退回重送說明" />
+          </div>
+        </div>
+        <div class="form-group full">
+          <label>文案內容 <span class="required">*</span></label>
+          <textarea class="form-input" id="sub-copy-text" rows="6" placeholder="請輸入待審查的廣告文案內容..."></textarea>
+        </div>
+      </div>
+
+      <div id="ai-result-area"></div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button class="btn btn-outline" onclick="clearSubmitForm()">清除</button>
+        <button class="btn btn-primary" id="btn-run-ai" onclick="runAiReview()">🤖 執行 AI 審查</button>
+        <button class="btn btn-primary" id="btn-submit" onclick="submitCopy()" style="display:none">📤 提交送審</button>
+      </div>
+    </div>
+
+    <!-- PM：我的文案 -->
+    <div class="page" id="page-pm-list">
+      <div class="page-header-row page-header">
+        <div>
+          <h1>我的文案</h1>
+          <p>查看所有已提交的文案狀態</p>
+        </div>
+        <button class="btn btn-primary" onclick="navigateTo('pm-submit')">＋ 提交新文案</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table id="pm-list-table">
+            <thead>
+              <tr>
+                <th>文案標題</th>
+                <th>分類</th>
+                <th>產品類型</th>
+                <th>AI 風險</th>
+                <th>狀態</th>
+                <th>提交時間</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="pm-list-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PM/審查員：詳情頁 -->
+    <div class="page" id="page-detail">
+      <div class="page-header-row page-header">
+        <div>
+          <h1 id="detail-title-h1">文案詳情</h1>
+          <div class="detail-meta" id="detail-meta"></div>
+        </div>
+        <button class="btn btn-outline" onclick="goBack()">← 返回</button>
+      </div>
+      <div id="detail-content"></div>
+    </div>
+
+    <!-- 審查員：待審佇列 -->
+    <div class="page" id="page-reviewer-queue">
+      <div class="page-header">
+        <h1>待審佇列</h1>
+        <p>指派給您的待審文案</p>
+      </div>
+      <div class="stats-grid" id="reviewer-stats-grid"></div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>文案標題</th>
+                <th>分類</th>
+                <th>AI 風險</th>
+                <th>提交 PM</th>
+                <th>等待時間</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="reviewer-queue-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 管理者：儀表板 -->
+    <div class="page" id="page-admin-dashboard">
+      <div class="page-header">
+        <h1>管理儀表板</h1>
+        <p>本月統計與系統概覽</p>
+      </div>
+      <div class="stats-grid" id="admin-stats-grid"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+        <div class="card card-body">
+          <div style="font-size:13px;font-weight:700;margin-bottom:14px;">⚠️ 逾時未審（&gt;24h）</div>
+          <div id="overdue-list"></div>
+        </div>
+        <div class="card card-body">
+          <div style="font-size:13px;font-weight:700;margin-bottom:14px;">👥 審查員負荷</div>
+          <div id="reviewer-loads"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 管理者：全部文案 -->
+    <div class="page" id="page-admin-submissions">
+      <div class="page-header">
+        <h1>全部文案紀錄</h1>
+        <p>查看所有文案的審查狀態</p>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+        <select class="form-input" id="filter-status" style="width:140px;" onchange="filterSubmissions()">
+          <option value="">全部狀態</option>
+          <option value="pending_human">待審核</option>
+          <option value="approved">已核准</option>
+          <option value="rejected">已退回</option>
+          <option value="ai_rejected">AI 退回</option>
+        </select>
+        <select class="form-input" id="filter-type" style="width:140px;" onchange="filterSubmissions()">
+          <option value="">全部分類</option>
+        </select>
+        <button class="btn btn-outline btn-sm" onclick="loadAllSubmissions()">🔄 重新整理</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>文案標題</th>
+                <th>分類</th>
+                <th>PM</th>
+                <th>AI 風險</th>
+                <th>狀態</th>
+                <th>審查員</th>
+                <th>時間</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="admin-submissions-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 管理者：文案分類 -->
+    <div class="page" id="page-admin-copy-types">
+      <div class="page-header-row page-header">
+        <div>
+          <h1>文案分類管理</h1>
+          <p>設定分類與指派審查員</p>
+        </div>
+        <button class="btn btn-primary" onclick="showAddCopyType()">＋ 新增分類</button>
+      </div>
+      <div id="copy-types-list"></div>
+    </div>
+
+    <!-- 管理者：審查員管理 -->
+    <div class="page" id="page-admin-reviewers">
+      <div class="page-header">
+        <h1>審查員管理</h1>
+        <p>管理法規人員與主管文案帳號</p>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>姓名</th>
+                <th>Email</th>
+                <th>角色</th>
+                <th>待審數</th>
+                <th>狀態</th>
+              </tr>
+            </thead>
+            <tbody id="reviewers-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 設定 -->
+    <div class="page" id="page-settings">
+      <div class="page-header">
+        <h1>系統設定</h1>
+        <p>連接 Google Sheets 與 AI 設定</p>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-header">
+          🔗 Google Sheets 連接
+          <button class="btn btn-outline btn-sm" onclick="showConfigModal()">修改設定</button>
+        </div>
+        <div style="padding:16px 18px;font-size:13px;" id="settings-connection-status"></div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-header">📊 Google Sheets 結構說明</div>
+        <div style="padding:16px 18px;">
+          <p style="font-size:12px;color:var(--text2);line-height:2;">
+            試算表需包含以下工作表（Sheet）：<br>
+            <code style="font-family:monospace;background:var(--surface2);padding:1px 5px;border-radius:3px;">Users</code>　
+            <code style="font-family:monospace;background:var(--surface2);padding:1px 5px;border-radius:3px;">CopyTypes</code>　
+            <code style="font-family:monospace;background:var(--surface2);padding:1px 5px;border-radius:3px;">Submissions</code>　
+            <code style="font-family:monospace;background:var(--surface2);padding:1px 5px;border-radius:3px;">ReviewHistory</code>
+            <br><br>
+            <button class="btn btn-outline btn-sm" onclick="downloadGasScript()">📥 下載 Google Apps Script 程式碼</button>
+            <button class="btn btn-outline btn-sm" onclick="initSheetData()" style="margin-left:8px">🚀 初始化 Sheet 資料</button>
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Loading -->
+<div id="loading" class="loading-overlay" style="display:none;">
+  <div style="text-align:center;">
+    <div class="spinner"></div>
+    <div style="margin-top:12px;font-size:13px;color:var(--text2);" id="loading-text">載入中...</div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ─────────────────────────────────────────
+// 全域狀態
+// ─────────────────────────────────────────
+let currentUser = null;
+let GAS_URL = localStorage.getItem('gas_url') || 'https://script.google.com/macros/s/AKfycbw_5i382yi4lfmamFJp8HLUg42BMjG5itk6YQG0N6mweTJeAPpId1d3DsJFEN42dyJFJA/exec';
+let SHEET_ID = localStorage.getItem('sheet_id') || '';
+let currentPage = '';
+let currentSubmission = null;
+let previousPage = '';
+let aiResult = null;
+let allSubmissions = [];
+let copyTypes = [];
+
+// Mock 資料（未設定 GAS 時使用）
+const MOCK_USERS = [
+  { id:'u1', name:'Alice Chen', email:'alice@co.com', password:'pm123', role:'pm', isActive:true },
+  { id:'u2', name:'Eve Wang', email:'eve@co.com', password:'adm123', role:'admin', isActive:true },
+  { id:'u3', name:'Carol Wu', email:'carol@co.com', password:'rev123', role:'legal_reviewer', isActive:true },
+  { id:'u4', name:'David Huang', email:'david@co.com', password:'rev123', role:'copy_reviewer', isActive:true },
+];
+
+const DEFAULT_COPY_TYPES = [
+  { id:'ct1', name:'官網文案', code:'website', color:'#185FA5', assignedReviewerId:'u3', assignedReviewerName:'Carol Wu', isActive:true },
+  { id:'ct2', name:'社群貼文', code:'social', color:'#0F6E56', assignedReviewerId:'u4', assignedReviewerName:'David Huang', isActive:true },
+  { id:'ct3', name:'電商頁面', code:'ecommerce', color:'#993C1D', assignedReviewerId:'u3', assignedReviewerName:'Carol Wu', isActive:true },
+  { id:'ct4', name:'EDM', code:'edm', color:'#634AB7', assignedReviewerId:'u4', assignedReviewerName:'David Huang', isActive:true },
+  { id:'ct5', name:'廣告投放', code:'ad', color:'#7D6608', assignedReviewerId:'u3', assignedReviewerName:'Carol Wu', isActive:true },
+  { id:'ct6', name:'素材文字', code:'creative', color:'#6B3D8A', assignedReviewerId:'u4', assignedReviewerName:'David Huang', isActive:true },
+];
+
+let mockSubmissions = JSON.parse(localStorage.getItem('mock_submissions') || '[]');
+let mockCopyTypes = JSON.parse(localStorage.getItem('mock_copy_types') || JSON.stringify(DEFAULT_COPY_TYPES));
+
+const ROLE_LABELS = {
+  pm: '行銷 PM',
+  legal_reviewer: '法規人員',
+  copy_reviewer: '主管文案',
+  admin: '管理者',
+};
+
+const STATUS_LABELS = {
+  draft: '草稿',
+  ai_reviewing: 'AI 審查中',
+  ai_rejected: 'AI 退回',
+  pending_human: '待人工審核',
+  approved: '已核准',
+  rejected: '退回修改',
+};
+
+const PRODUCT_LABELS = { food:'一般保健食品', health_food:'健康食品（小綠人）', cosmetic:'化粧品' };
+
+// ─────────────────────────────────────────
+// 工具函式
+// ─────────────────────────────────────────
+function showLoading(text='載入中...') {
+  document.getElementById('loading').style.display = 'flex';
+  document.getElementById('loading-text').textContent = text;
+}
+function hideLoading() { document.getElementById('loading').style.display = 'none'; }
+
+function toast(msg, type='info', duration=3000) {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, duration);
+}
+
+function genId() { return 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,7); }
+
+function timeAgo(dateStr) {
+  if (!dateStr) return '-';
+  const d = new Date(dateStr);
+  const diff = (Date.now() - d) / 1000;
+  if (diff < 60) return '剛剛';
+  if (diff < 3600) return Math.floor(diff/60) + '分前';
+  if (diff < 86400) return Math.floor(diff/3600) + '小時前';
+  return Math.floor(diff/86400) + '天前';
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '-';
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('zh-TW') + ' ' + d.toLocaleTimeString('zh-TW', {hour:'2-digit',minute:'2-digit'});
+}
+
+function statusBadge(status) {
+  const labels = STATUS_LABELS;
+  const icons = { draft:'⬜', ai_reviewing:'🟣', ai_rejected:'🔴', pending_human:'🟡', approved:'✅', rejected:'❌' };
+  return `<span class="status-badge status-${status}">${icons[status]||''} ${labels[status]||status}</span>`;
+}
+
+function riskBadge(risk) {
+  if (!risk) return '-';
+  const icons = { high:'🔴', medium:'🟡', low:'🔵', pass:'✅' };
+  const labels = { high:'高風險', medium:'中風險', low:'低風險', pass:'通過' };
+  return `<span class="risk-badge risk-${risk}">${icons[risk]} ${labels[risk]}</span>`;
+}
+
+function copyTypeBadge(ct) {
+  if (!ct) return '';
+  const color = ct.color || '#888';
+  return `<span class="copy-type-badge" style="background:${color}18;color:${color};border:1px solid ${color}35;">${ct.name}</span>`;
+}
+
+function getCopyType(id) {
+  return mockCopyTypes.find(c=>c.id===id) || null;
+}
+
+function saveMockData() {
+  localStorage.setItem('mock_submissions', JSON.stringify(mockSubmissions));
+  localStorage.setItem('mock_copy_types', JSON.stringify(mockCopyTypes));
+}
+
+// ─────────────────────────────────────────
+// GAS API 呼叫
+// ─────────────────────────────────────────
+async function gasRequest(action, data={}) {
+  if (!GAS_URL) return null; // 使用 mock 模式
+  const url = new URL(GAS_URL);
+  url.searchParams.set('action', action);
+  const response = await fetch(url.toString(), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+    redirect: 'follow',
+    mode: 'cors',
+  });
+  const result = await response.json();
+  if (result.error) throw new Error(result.error);
+  return result.data;
+}
+
+// ─────────────────────────────────────────
+// 設定
+// ─────────────────────────────────────────
+function showConfigModal() { document.getElementById('config-modal').style.display='flex'; }
+function closeConfigModal() { document.getElementById('config-modal').style.display='none'; }
+
+function saveConfig() {
+  GAS_URL = document.getElementById('gas-url-input').value.trim();
+  SHEET_ID = document.getElementById('sheet-id-input').value.trim();
+  localStorage.setItem('gas_url', GAS_URL);
+  localStorage.setItem('sheet_id', SHEET_ID);
+  if (GAS_URL) {
+    document.getElementById('config-banner').classList.add('hidden');
+    toast('Google Sheets 設定已儲存！', 'success');
+  }
+  closeConfigModal();
+  updateSettingsPage();
+}
+
+function updateSettingsPage() {
+  const el = document.getElementById('settings-connection-status');
+  if (!el) return;
+  if (GAS_URL) {
+    el.innerHTML = `<span style="color:var(--green)">✅ 已連接</span><br><small style="color:var(--text3);font-family:monospace;">${GAS_URL.slice(0,60)}...</small>`;
+  } else {
+    el.innerHTML = `<span style="color:var(--yellow)">⚠️ 未設定（使用本地模擬模式）</span><br><small style="color:var(--text3);">點擊「修改設定」以連接 Google Sheets</small>`;
+  }
+}
+
+function downloadGasScript() {
+  const script = `// Google Apps Script - 保健食品廣告法規合規審查系統
+// 請將此程式碼貼到 Google Apps Script 並部署為 Web App
+
+const SPREADSHEET_ID = '${SHEET_ID || "請填入你的試算表ID"}';
+const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+function doGet(e) {
+  return handleRequest(e);
+}
+
+function doPost(e) {
+  return handleRequest(e);
+}
+
+function handleRequest(e) {
+  const action = e.parameter.action || (e.postData ? JSON.parse(e.postData.contents).action : '');
+  const data = e.postData ? JSON.parse(e.postData.contents) : {};
+  
+  try {
+    let result;
+    switch(action) {
+      case 'getSubmissions': result = getSubmissions(data); break;
+      case 'addSubmission': result = addSubmission(data); break;
+      case 'updateSubmission': result = updateSubmission(data); break;
+      case 'getCopyTypes': result = getCopyTypes(); break;
+      case 'addCopyType': result = addCopyType(data); break;
+      case 'updateCopyType': result = updateCopyType(data); break;
+      case 'getUsers': result = getUsers(data); break;
+      case 'initData': result = initData(); break;
+      default: result = { error: 'Unknown action' };
+    }
+    return ContentService.createTextOutput(JSON.stringify({ data: result }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ error: err.message }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function getSheet(name) {
+  return ss.getSheetByName(name) || ss.insertSheet(name);
+}
+
+function sheetToObjects(sheet) {
+  const data = sheet.getDataRange().getValues();
+  if (data.length < 2) return [];
+  const headers = data[0];
+  return data.slice(1).map(row => {
+    const obj = {};
+    headers.forEach((h, i) => { obj[h] = row[i]; });
+    return obj;
+  });
+}
+
+function getSubmissions(params) {
+  const sheet = getSheet('Submissions');
+  let rows = sheetToObjects(sheet);
+  if (params.userId && params.role === 'pm') {
+    rows = rows.filter(r => r.submittedBy === params.userId);
+  }
+  if (params.userId && (params.role === 'legal_reviewer' || params.role === 'copy_reviewer')) {
+    rows = rows.filter(r => r.assignedReviewerId === params.userId);
+  }
+  return rows.map(r => ({ ...r, aiFlags: r.aiFlags ? JSON.parse(r.aiFlags) : [] }));
+}
+
+function addSubmission(data) {
+  const sheet = getSheet('Submissions');
+  const headers = ['id','title','copyText','copyTypeId','copyTypeName','productType',
+    'submittedBy','submittedByName','submittedAt','status','aiRisk','aiSummary',
+    'aiFlags','aiChannelNotes','assignedReviewerId','assignedReviewerName','assignedAt',
+    'reviewedBy','reviewedAt','reviewDecision','reviewNote','version','parentId','isResubmit'];
+  
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(headers);
+  }
+  
+  const id = 'SUB-' + Date.now();
+  const row = headers.map(h => {
+    if (h === 'id') return id;
+    if (h === 'submittedAt') return new Date().toISOString();
+    if (h === 'status') return data.status || 'pending_human';
+    if (h === 'aiFlags') return JSON.stringify(data.aiFlags || []);
+    return data[h] || '';
+  });
+  sheet.appendRow(row);
+  return { id };
+}
+
+function updateSubmission(data) {
+  const sheet = getSheet('Submissions');
+  const rows = sheet.getDataRange().getValues();
+  const headers = rows[0];
+  const idIdx = headers.indexOf('id');
+  
+  for (let i = 1; i < rows.length; i++) {
+    if (rows[i][idIdx] === data.id) {
+      Object.keys(data).forEach(key => {
+        const colIdx = headers.indexOf(key);
+        if (colIdx >= 0 && key !== 'id') {
+          const val = key === 'aiFlags' ? JSON.stringify(data[key]) : data[key];
+          sheet.getRange(i+1, colIdx+1).setValue(val);
+        }
+      });
+      return { success: true };
+    }
+  }
+  return { error: 'Not found' };
+}
+
+function getCopyTypes() {
+  const sheet = getSheet('CopyTypes');
+  return sheetToObjects(sheet);
+}
+
+function addCopyType(data) {
+  const sheet = getSheet('CopyTypes');
+  const headers = ['id','name','code','color','assignedReviewerId','assignedReviewerName','isActive'];
+  if (sheet.getLastRow() === 0) sheet.appendRow(headers);
+  const id = 'ct_' + Date.now();
+  sheet.appendRow([id, data.name, data.code, data.color, data.assignedReviewerId, data.assignedReviewerName, true]);
+  return { id };
+}
+
+function updateCopyType(data) {
+  const sheet = getSheet('CopyTypes');
+  const rows = sheet.getDataRange().getValues();
+  const headers = rows[0];
+  const idIdx = headers.indexOf('id');
+  for (let i = 1; i < rows.length; i++) {
+    if (rows[i][idIdx] === data.id) {
+      Object.keys(data).forEach(key => {
+        const colIdx = headers.indexOf(key);
+        if (colIdx >= 0 && key !== 'id') sheet.getRange(i+1, colIdx+1).setValue(data[key]);
+      });
+      return { success: true };
+    }
+  }
+  return { error: 'Not found' };
+}
+
+function getUsers(params) {
+  const sheet = getSheet('Users');
+  let users = sheetToObjects(sheet);
+  if (params && params.rolesOnly) {
+    users = users.filter(u => ['legal_reviewer','copy_reviewer'].includes(u.role));
+  }
+  return users.map(u => ({ ...u, password: undefined }));
+}
+
+function initData() {
+  // 初始化範例資料
+  const usersSheet = getSheet('Users');
+  usersSheet.clear();
+  usersSheet.appendRow(['id','name','email','password','role','isActive']);
+  const users = [
+    ['u1','Alice Chen','alice@co.com','pm123','pm',true],
+    ['u2','Eve Wang','eve@co.com','adm123','admin',true],
+    ['u3','Carol Wu','carol@co.com','rev123','legal_reviewer',true],
+    ['u4','David Huang','david@co.com','rev123','copy_reviewer',true],
+  ];
+  users.forEach(u => usersSheet.appendRow(u));
+  
+  const ctSheet = getSheet('CopyTypes');
+  ctSheet.clear();
+  ctSheet.appendRow(['id','name','code','color','assignedReviewerId','assignedReviewerName','isActive']);
+  const cts = [
+    ['ct1','官網文案','website','#185FA5','u3','Carol Wu',true],
+    ['ct2','社群貼文','social','#0F6E56','u4','David Huang',true],
+    ['ct3','電商頁面','ecommerce','#993C1D','u3','Carol Wu',true],
+    ['ct4','EDM','edm','#634AB7','u4','David Huang',true],
+    ['ct5','廣告投放','ad','#7D6608','u3','Carol Wu',true],
+    ['ct6','素材文字','creative','#6B3D8A','u4','David Huang',true],
+  ];
+  cts.forEach(c => ctSheet.appendRow(c));
+  
+  getSheet('Submissions').clear();
+  getSheet('Submissions').appendRow(['id','title','copyText','copyTypeId','copyTypeName','productType',
+    'submittedBy','submittedByName','submittedAt','status','aiRisk','aiSummary',
+    'aiFlags','aiChannelNotes','assignedReviewerId','assignedReviewerName','assignedAt',
+    'reviewedBy','reviewedAt','reviewDecision','reviewNote','version','parentId','isResubmit']);
+  
+  return { success: true, message: '初始化完成' };
+}`;
+
+  const blob = new Blob([script], {type:'text/javascript'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'compliance_review_gas.js';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('GAS 程式碼已下載！', 'success');
+}
+
+async function initSheetData() {
+  if (!GAS_URL) { toast('請先設定 GAS URL', 'warning'); return; }
+  showLoading('初始化 Sheet 資料...');
+  try {
+    await gasRequest('initData');
+    toast('Sheet 初始化完成！', 'success');
+  } catch(e) {
+    toast('初始化失敗：' + e.message, 'error');
+  }
+  hideLoading();
+}
+
+// ─────────────────────────────────────────
+// 登入 / 登出
+// ─────────────────────────────────────────
+function fillLogin(email, pwd) {
+  document.getElementById('login-email').value = email;
+  document.getElementById('login-password').value = pwd;
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pwd = document.getElementById('login-password').value;
+  if (!email || !pwd) { toast('請填入帳號密碼', 'warning'); return; }
+
+  showLoading('驗證中...');
+  try {
+    // 先嘗試 GAS
+    let user = null;
+    if (GAS_URL) {
+      const users = await gasRequest('getUsers', {});
+      user = users?.find(u => u.email === email && u.password === pwd && u.isActive);
+    } else {
+      user = MOCK_USERS.find(u => u.email === email && u.password === pwd && u.isActive);
+    }
+
+    if (!user) { hideLoading(); toast('帳號或密碼錯誤', 'error'); return; }
+
+    currentUser = user;
+    sessionStorage.setItem('currentUser', JSON.stringify(user));
+    await loadCopyTypes();
+    setupUI();
+    hideLoading();
+    if (!GAS_URL) toast('⚠️ 本地模擬模式（未連接 Google Sheets）', 'warning', 4000);
+  } catch(e) {
+    // fallback to mock
+    const user = MOCK_USERS.find(u => u.email === email && u.password === pwd);
+    if (user) {
+      currentUser = user;
+      await loadCopyTypes();
+      setupUI();
+      toast('⚠️ GAS 連線失敗，使用本地模式', 'warning', 4000);
+    } else {
+      toast('登入失敗：' + e.message, 'error');
+    }
+    hideLoading();
+  }
+}
+
+function doLogout() {
+  currentUser = null;
+  sessionStorage.removeItem('currentUser');
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('login-page').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+// ─────────────────────────────────────────
+// 分類資料
+// ─────────────────────────────────────────
+async function loadCopyTypes() {
+  if (GAS_URL) {
+    try {
+      const data = await gasRequest('getCopyTypes');
+      if (data) mockCopyTypes = data.filter(c => c.isActive !== false && c.isActive !== 'false');
+    } catch(e) { /* use local */ }
+  }
+  copyTypes = mockCopyTypes.filter(c => c.isActive);
+}
+
+// ─────────────────────────────────────────
+// UI 設定
+// ─────────────────────────────────────────
+function setupUI() {
+  document.getElementById('login-page').style.display = 'none';
+  const app = document.getElementById('app');
+  app.style.display = 'flex';
+  app.classList.add('visible');
+
+  // 側欄
+  document.getElementById('sidebar-username').textContent = currentUser.name;
+  document.getElementById('sidebar-userrole').textContent = ROLE_LABELS[currentUser.role];
+  document.getElementById('user-avatar-text').textContent = currentUser.name.slice(0,1);
+
+  buildNav();
+
+  if (!GAS_URL) {
+    // 設定提示已顯示
+  } else {
+    document.getElementById('config-banner').classList.add('hidden');
+  }
+
+  // 初始頁
+  const defaultPages = { pm:'pm-list', legal_reviewer:'reviewer-queue', copy_reviewer:'reviewer-queue', admin:'admin-dashboard' };
+  navigateTo(defaultPages[currentUser.role]);
+}
+
+function buildNav() {
+  const navs = {
+    pm: [
+      { icon:'📝', label:'提交文案', page:'pm-submit' },
+      { icon:'📋', label:'我的文案', page:'pm-list' },
+    ],
+    legal_reviewer: [
+      { icon:'⏳', label:'待審佇列', page:'reviewer-queue' },
+    ],
+    copy_reviewer: [
+      { icon:'⏳', label:'待審佇列', page:'reviewer-queue' },
+    ],
+    admin: [
+      { icon:'📊', label:'儀表板', page:'admin-dashboard' },
+      { icon:'📋', label:'全部文案', page:'admin-submissions' },
+      { icon:'🗂️', label:'文案分類', page:'admin-copy-types' },
+      { icon:'👥', label:'審查員', page:'admin-reviewers' },
+    ],
+  };
+  const common = [
+    { icon:'⚙️', label:'系統設定', page:'settings' },
+  ];
+  const items = [...(navs[currentUser.role]||[]), ...common];
+  const nav = document.getElementById('sidebar-nav');
+  nav.innerHTML = items.map(item => `
+    <div class="nav-item" id="nav-${item.page}" onclick="navigateTo('${item.page}')">
+      <span class="nav-icon">${item.icon}</span>
+      <span>${item.label}</span>
+    </div>
+  `).join('');
+}
+
+async function navigateTo(page) {
+  if (currentPage === page) return;
+  previousPage = currentPage;
+  currentPage = page;
+
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + page);
+  if (navEl) navEl.classList.add('active');
+
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  const pageEl = document.getElementById('page-' + page.replace(/-/g,'_').replace(/([a-z])([A-Z])/g,'$1_$2'));
+  const pageId = 'page-' + page;
+  const target = document.getElementById(pageId);
+  if (target) target.classList.add('active');
+
+  // 載入各頁資料
+  if (page === 'pm-list') await loadPmList();
+  if (page === 'reviewer-queue') await loadReviewerQueue();
+  if (page === 'admin-dashboard') await loadAdminDashboard();
+  if (page === 'admin-submissions') await loadAllSubmissions();
+  if (page === 'admin-copy-types') renderCopyTypesPage();
+  if (page === 'admin-reviewers') renderReviewersPage();
+  if (page === 'settings') updateSettingsPage();
+  if (page === 'pm-submit') {
+    clearSubmitForm();
+    populateCopyTypeSelect();
+  }
+}
+
+function goBack() {
+  if (previousPage) navigateTo(previousPage);
+  else {
+    const defaults = { pm:'pm-list', legal_reviewer:'reviewer-queue', copy_reviewer:'reviewer-queue', admin:'admin-submissions' };
+    navigateTo(defaults[currentUser.role]);
+  }
+}
+
+// ─────────────────────────────────────────
+// AI 審查（呼叫 Claude API）
+// ─────────────────────────────────────────
+const FOOD_SYSTEM_PROMPT = `你是台灣食品廣告法規審查專家，依據《食品標示宣傳或廣告詞句涉及誇張易生誤解或醫療效能之認定基準》審查文案。
+
+【高風險🔴】絕對禁止詞例（醫療效能）：治療近視、恢復視力、防止便秘、利尿、改善過敏體質、壯陽、強精、降血壓、調整內分泌、補腎、溫腎、滋腎、固腎、健脾、補脾、活血、化瘀、解毒
+
+【中風險🟡】禁止使用（誇張或易生誤解）：增強抵抗力、強化細胞功能、增智、補腦、增強記憶力、解酒、清除自由基、排毒素、豐胸、減肥、美白、延緩衰老、預防老化、改善皺紋、纖體
+
+【合規✅】通常可使用：調整體質、調節生理機能、滋補強身、增強體力、養顏美容、促進新陳代謝、促進食慾、退火、降火氣、使口氣芬芳、幫助入睡
+
+只輸出 JSON，格式：{"overall_risk":"high|medium|low|pass","summary":"20字以內","flags":[{"term":"詞彙","risk_level":"high|medium|low","category":"類別","reason":"原因40字內","legal_basis":"法規依據","suggestion":"建議替換20字內"}],"channel_notes":{"social_media":"","ecommerce":"","ad_placement":""}}`;
+
+const COSMETIC_SYSTEM_PROMPT = `你是台灣化粧品廣告法規審查專家，依據《化粧品衛生安全管理法》第10條及《化粧品標示宣傳廣告涉及虛偽誇大或醫療效能認定準則》審查文案。
+
+【高風險🔴附件一-生理機能/身體結構】：刺激毛囊、增強免疫力、改善微血管循環、促進膠原蛋白合成、有效預防落髮、瘦身、減肥、豐胸、漂白、消除浮腫、抗過敏
+
+【高風險🔴附件四-醫療效能】：換膚、除疤、消除黑眼圈、消除眼袋、消炎、殺菌、消腫止痛、生髮、藥用
+
+【合規✅附件二-可使用詞句】：清潔肌膚、保濕、保水、鎖水、控油、延緩肌膚老化、淡化細紋、緊緻毛孔、使頭髮柔順
+
+只輸出 JSON，格式：{"overall_risk":"high|medium|low|pass","summary":"20字以內","flags":[{"term":"詞彙","risk_level":"high|medium|low","category":"類別","reason":"原因40字內","legal_basis":"法規依據","suggestion":"建議替換20字內"}],"channel_notes":{"social_media":"","ecommerce":"","ad_placement":""}}`;
+
+async function runAiReview() {
+  const title = document.getElementById('sub-title').value.trim();
+  const copyTypeId = document.getElementById('sub-copy-type').value;
+  const productType = document.getElementById('sub-product-type').value;
+  const copyText = document.getElementById('sub-copy-text').value.trim();
+
+  if (!title || !copyTypeId || !productType || !copyText) {
+    toast('請填寫所有必填欄位', 'warning');
+    return;
+  }
+
+  const ct = getCopyType(copyTypeId);
+  const area = document.getElementById('ai-result-area');
+  area.innerHTML = `
+    <div class="ai-result-panel" style="margin-bottom:20px;">
+      <div class="ai-result-header"><h3>🤖 AI 合規審查</h3><span class="risk-badge risk-medium">分析中...</span></div>
+      <div class="ai-result-body">
+        <div class="ai-loading">
+          <div style="font-size:24px;margin-bottom:8px;">🔍</div>
+          <div style="font-weight:700;margin-bottom:4px;">AI 正在審查文案...</div>
+          <div style="font-size:12px;color:var(--text3);">依台灣食藥署法規標準檢查</div>
+          <div class="ai-loading-bar"><div class="ai-loading-progress"></div></div>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('btn-run-ai').disabled = true;
+  document.getElementById('btn-submit').style.display = 'none';
+
+  try {
+    const systemPrompt = productType === 'cosmetic' ? COSMETIC_SYSTEM_PROMPT : FOOD_SYSTEM_PROMPT;
+    const userPrompt = `文案類型：${ct?.name||'未知'}\n產品類型：${PRODUCT_LABELS[productType]}\n\n待審查文案：\n"""\n${copyText}\n"""\n\n只輸出 JSON。`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        system: systemPrompt,
+        messages: [{ role:'user', content: userPrompt }],
+      }),
+    });
+
+    const data = await response.json();
+    const raw = data.content?.[0]?.text || '{}';
+    aiResult = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    renderAiResult(aiResult, copyText);
+    document.getElementById('btn-submit').style.display = aiResult.overall_risk !== 'high' ? 'inline-flex' : 'none';
+    if (aiResult.overall_risk === 'high') {
+      toast('⚠️ AI 發現高風險詞彙，請修改後重試', 'error', 5000);
+    }
+  } catch(e) {
+    // 示範模式
+    aiResult = {
+      overall_risk: 'medium',
+      summary: '發現中風險詞彙，建議修改',
+      flags: [{ term:'增強抵抗力', risk_level:'medium', category:'誇張-生理功能', reason:'屬誇張詞彙，不得用於食品廣告', legal_basis:'食品廣告認定基準（二）A', suggestion:'調節生理機能' }],
+      channel_notes: { social_media:'社群貼文需特別注意禁止詞彙', ecommerce:'電商頁面需符合規定', ad_placement:'廣告投放審查較嚴格' }
+    };
+    renderAiResult(aiResult, copyText);
+    document.getElementById('btn-submit').style.display = 'inline-flex';
+    toast('（示範模式）AI API 無法連線，顯示範例結果', 'warning', 4000);
+  }
+  document.getElementById('btn-run-ai').disabled = false;
+}
+
+function renderAiResult(result, copyText) {
+  const RISK_COLORS = {
+    high: { bg:'#FDEDEC', color:'#C0392B', border:'#E74C3C' },
+    medium: { bg:'#FEF9E7', color:'#9A7D0A', border:'#F4D03F' },
+    low: { bg:'#EAF2FF', color:'#1A5276', border:'#5DADE2' },
+  };
+
+  let highlighted = copyText;
+  if (result.flags?.length) {
+    const sorted = [...result.flags].sort((a,b)=>b.term.length-a.term.length);
+    sorted.forEach(flag => {
+      const cfg = RISK_COLORS[flag.risk_level];
+      if (!cfg) return;
+      const esc = flag.term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      highlighted = highlighted.replace(new RegExp(esc,'g'),
+        `<mark style="background:${cfg.bg};color:${cfg.color};border-bottom:2px solid ${cfg.border};padding:1px 3px;border-radius:3px;font-weight:600;">${flag.term}</mark>`);
+    });
+  }
+
+  const flagsHtml = (result.flags||[]).map(flag=>`
+    <div class="flag-item flag-item-${flag.risk_level}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        ${riskBadge(flag.risk_level)}
+        <span class="flag-term">${flag.term}</span>
+        <span style="font-size:11px;color:var(--text3);margin-left:auto;">${flag.category||''}</span>
+      </div>
+      <div class="flag-reason">⚠️ ${flag.reason}</div>
+      ${flag.suggestion ? `<div class="flag-suggestion">✅ 建議替換：${flag.suggestion}</div>` : ''}
+      <div class="flag-meta">📖 ${flag.legal_basis||''}</div>
+    </div>
+  `).join('');
+
+  const cnotes = result.channel_notes || {};
+  const notesHtml = Object.entries(cnotes).filter(([,v])=>v).map(([k,v])=>`
+    <div style="font-size:12px;padding:6px 0;border-bottom:1px solid var(--border);">
+      <strong>${{social_media:'社群媒體',ecommerce:'電商平台',ad_placement:'廣告投放'}[k]||k}</strong>：${v}
+    </div>
+  `).join('');
+
+  document.getElementById('ai-result-area').innerHTML = `
+    <div class="ai-result-panel" style="margin-bottom:20px;">
+      <div class="ai-result-header">
+        <h3>🤖 AI 合規審查結果</h3>
+        ${riskBadge(result.overall_risk)}
+      </div>
+      <div class="ai-result-body">
+        <div style="background:var(--surface2);border-radius:6px;padding:12px;margin-bottom:16px;font-size:13px;">
+          <strong>總結：</strong>${result.summary}
+        </div>
+        <div class="section-tabs">
+          <div class="section-tab active" onclick="switchTab('flagged')">⚠️ 標記詞彙（${(result.flags||[]).length}）</div>
+          <div class="section-tab" onclick="switchTab('highlighted')">📄 文案標記</div>
+          <div class="section-tab" onclick="switchTab('notes')">💡 渠道注意</div>
+        </div>
+        <div id="tab-flagged">${flagsHtml || '<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">未發現違規詞彙</div></div>'}</div>
+        <div id="tab-highlighted" style="display:none;"><div class="highlighted-text">${highlighted}</div></div>
+        <div id="tab-notes" style="display:none;">${notesHtml || '<div style="color:var(--text3);font-size:12px;padding:8px 0;">無特別注意事項</div>'}</div>
+      </div>
+    </div>`;
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.section-tab').forEach((el,i) => {
+    const tabs = ['flagged','highlighted','notes'];
+    el.classList.toggle('active', tabs[i]===tab);
+  });
+  ['flagged','highlighted','notes'].forEach(t => {
+    const el = document.getElementById('tab-'+t);
+    if (el) el.style.display = t===tab ? 'block' : 'none';
+  });
+}
+
+// ─────────────────────────────────────────
+// 提交文案
+// ─────────────────────────────────────────
+function populateCopyTypeSelect() {
+  const sel = document.getElementById('sub-copy-type');
+  sel.innerHTML = '<option value="">請選擇分類</option>' +
+    copyTypes.map(ct=>`<option value="${ct.id}">${ct.name}</option>`).join('');
+}
+
+function clearSubmitForm() {
+  document.getElementById('sub-title').value = '';
+  document.getElementById('sub-copy-type').value = '';
+  document.getElementById('sub-product-type').value = '';
+  document.getElementById('sub-copy-text').value = '';
+  document.getElementById('sub-resubmit-note').value = '';
+  document.getElementById('ai-result-area').innerHTML = '';
+  document.getElementById('btn-submit').style.display = 'none';
+  document.getElementById('btn-run-ai').disabled = false;
+  aiResult = null;
+  populateCopyTypeSelect();
+}
+
+async function submitCopy() {
+  if (!aiResult) { toast('請先執行 AI 審查', 'warning'); return; }
+
+  const title = document.getElementById('sub-title').value.trim();
+  const copyTypeId = document.getElementById('sub-copy-type').value;
+  const productType = document.getElementById('sub-product-type').value;
+  const copyText = document.getElementById('sub-copy-text').value.trim();
+  const ct = getCopyType(copyTypeId);
+
+  const submission = {
+    id: genId(),
+    title,
+    copyText,
+    copyTypeId,
+    copyTypeName: ct?.name || '',
+    productType,
+    submittedBy: currentUser.id,
+    submittedByName: currentUser.name,
+    submittedAt: new Date().toISOString(),
+    status: 'pending_human',
+    aiRisk: aiResult.overall_risk,
+    aiSummary: aiResult.summary,
+    aiFlags: aiResult.flags || [],
+    aiChannelNotes: aiResult.channel_notes || {},
+    assignedReviewerId: ct?.assignedReviewerId || '',
+    assignedReviewerName: ct?.assignedReviewerName || '',
+    assignedAt: new Date().toISOString(),
+    version: 1,
+    isResubmit: false,
+  };
+
+  showLoading('提交中...');
+  try {
+    if (GAS_URL) {
+      await gasRequest('addSubmission', submission);
+    } else {
+      mockSubmissions.push(submission);
+      saveMockData();
+    }
+    hideLoading();
+    toast('文案已提交，等待審查員審核！', 'success');
+    clearSubmitForm();
+    navigateTo('pm-list');
+  } catch(e) {
+    hideLoading();
+    toast('提交失敗：' + e.message, 'error');
+  }
+}
+
+// ─────────────────────────────────────────
+// PM 列表
+// ─────────────────────────────────────────
+async function loadPmList() {
+  showLoading('載入文案...');
+  let subs = [];
+  try {
+    if (GAS_URL) {
+      subs = await gasRequest('getSubmissions', { userId: currentUser.id, role: currentUser.role }) || [];
+    } else {
+      subs = mockSubmissions.filter(s => s.submittedBy === currentUser.id);
+    }
+  } catch(e) {
+    subs = mockSubmissions.filter(s => s.submittedBy === currentUser.id);
+  }
+  allSubmissions = subs;
+
+  const tbody = document.getElementById('pm-list-tbody');
+  if (!subs.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📄</div><div class="empty-title">尚無文案紀錄</div><div class="empty-desc">點擊「提交新文案」開始送審</div></div></td></tr>`;
+    hideLoading(); return;
+  }
+
+  tbody.innerHTML = subs.sort((a,b)=>new Date(b.submittedAt)-new Date(a.submittedAt)).map(s=>{
+    const ct = getCopyType(s.copyTypeId);
+    return `<tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${ct ? copyTypeBadge(ct) : ''}
+          <span class="table-link" onclick="openDetail('${s.id}')">${s.title}</span>
+        </div>
+      </td>
+      <td>${ct ? ct.name : '-'}</td>
+      <td>${PRODUCT_LABELS[s.productType]||s.productType||'-'}</td>
+      <td>${riskBadge(s.aiRisk)}</td>
+      <td>${statusBadge(s.status)}</td>
+      <td style="font-size:12px;color:var(--text2);">${timeAgo(s.submittedAt)}</td>
+      <td>
+        <button class="btn btn-outline btn-sm" onclick="openDetail('${s.id}')">查看</button>
+        ${(s.status==='rejected'||s.status==='ai_rejected') ? `<button class="btn btn-outline btn-sm" onclick="resubmit('${s.id}')" style="margin-left:4px;color:var(--accent);">重送</button>` : ''}
+      </td>
+    </tr>`;
+  }).join('');
+  hideLoading();
+}
+
+// ─────────────────────────────────────────
+// 審查員佇列
+// ─────────────────────────────────────────
+async function loadReviewerQueue() {
+  showLoading('載入佇列...');
+  let subs = [];
+  try {
+    if (GAS_URL) {
+      const all = await gasRequest('getSubmissions', { userId: currentUser.id, role: currentUser.role }) || [];
+      subs = all.filter(s => s.status === 'pending_human');
+    } else {
+      subs = mockSubmissions.filter(s => s.assignedReviewerId === currentUser.id && s.status === 'pending_human');
+    }
+  } catch(e) {
+    subs = mockSubmissions.filter(s => s.assignedReviewerId === currentUser.id && s.status === 'pending_human');
+  }
+  allSubmissions = subs;
+
+  // 統計
+  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  let allMine = [];
+  try {
+    if (GAS_URL) allMine = await gasRequest('getSubmissions', { userId: currentUser.id, role: currentUser.role }) || [];
+    else allMine = mockSubmissions.filter(s => s.assignedReviewerId === currentUser.id);
+  } catch(e) { allMine = mockSubmissions.filter(s => s.assignedReviewerId === currentUser.id); }
+
+  const monthlyReviewed = allMine.filter(s => ['approved','rejected'].includes(s.status) && s.reviewedAt && new Date(s.reviewedAt) >= monthStart).length;
+  const monthlyRejected = allMine.filter(s => s.status==='rejected' && s.reviewedAt && new Date(s.reviewedAt) >= monthStart).length;
+
+  document.getElementById('reviewer-stats-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-label">待審核</div><div class="stat-value yellow">${subs.length}</div></div>
+    <div class="stat-card"><div class="stat-label">本月已審</div><div class="stat-value accent">${monthlyReviewed}</div></div>
+    <div class="stat-card"><div class="stat-label">本月退回</div><div class="stat-value red">${monthlyRejected}</div></div>
+  `;
+
+  const tbody = document.getElementById('reviewer-queue-tbody');
+  if (!subs.length) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">目前無待審文案</div></div></td></tr>`;
+    hideLoading(); return;
+  }
+
+  tbody.innerHTML = subs.map(s=>{
+    const ct = getCopyType(s.copyTypeId);
+    const hours = Math.floor((Date.now()-new Date(s.assignedAt||s.submittedAt))/3600000);
+    return `<tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${ct ? copyTypeBadge(ct) : ''}
+          <span class="table-link" onclick="openDetail('${s.id}')">${s.title}</span>
+        </div>
+      </td>
+      <td>${ct ? ct.name : '-'}</td>
+      <td>${riskBadge(s.aiRisk)}</td>
+      <td style="font-size:12px;">${s.submittedByName||'-'}</td>
+      <td style="font-size:12px;${hours>24?'color:var(--red);font-weight:700;':''}">${hours}h${hours>24?' ⚠️':''}</td>
+      <td><button class="btn btn-primary btn-sm" onclick="openDetail('${s.id}')">開始審核</button></td>
+    </tr>`;
+  }).join('');
+  hideLoading();
+}
+
+// ─────────────────────────────────────────
+// 詳情頁
+// ─────────────────────────────────────────
+function openDetail(id) {
+  let sub = allSubmissions.find(s=>s.id===id) || mockSubmissions.find(s=>s.id===id);
+  if (!sub) { toast('找不到文案', 'error'); return; }
+  currentSubmission = sub;
+  renderDetailPage(sub);
+  navigateTo('detail');
+}
+
+function renderDetailPage(s) {
+  const ct = getCopyType(s.copyTypeId);
+  document.getElementById('detail-title-h1').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      ${ct ? copyTypeBadge(ct) : ''}
+      ${s.title}
+    </div>
+  `;
+  document.getElementById('detail-meta').innerHTML = `
+    <span>📅 ${formatDate(s.submittedAt)}</span>
+    <span>👤 ${s.submittedByName||'-'}</span>
+    <span>📦 ${PRODUCT_LABELS[s.productType]||s.productType||'-'}</span>
+    ${statusBadge(s.status)}
+  `;
+
+  let flagsHtml = '';
+  const flags = typeof s.aiFlags === 'string' ? JSON.parse(s.aiFlags||'[]') : (s.aiFlags||[]);
+  if (flags.length) {
+    flagsHtml = flags.map(flag=>`
+      <div class="flag-item flag-item-${flag.risk_level}">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          ${riskBadge(flag.risk_level)}
+          <span class="flag-term">${flag.term}</span>
+        </div>
+        <div class="flag-reason">⚠️ ${flag.reason||''}</div>
+        ${flag.suggestion ? `<div class="flag-suggestion">✅ 建議：${flag.suggestion}</div>` : ''}
+        <div class="flag-meta">📖 ${flag.legal_basis||''}</div>
+      </div>
+    `).join('');
+  }
+
+  let RISK_COLORS = { high:{bg:'#FDEDEC',color:'#C0392B',border:'#E74C3C'}, medium:{bg:'#FEF9E7',color:'#9A7D0A',border:'#F4D03F'}, low:{bg:'#EAF2FF',color:'#1A5276',border:'#5DADE2'} };
+  let highlighted = s.copyText || '';
+  flags.forEach(flag => {
+    const cfg = RISK_COLORS[flag.risk_level];
+    if (!cfg) return;
+    const esc = flag.term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    highlighted = highlighted.replace(new RegExp(esc,'g'),
+      `<mark style="background:${cfg.bg};color:${cfg.color};border-bottom:2px solid ${cfg.border};padding:1px 3px;border-radius:3px;font-weight:600;">${flag.term}</mark>`);
+  });
+
+  // 退回原因
+  let rejectPanel = '';
+  if (s.status === 'rejected' && s.reviewNote) {
+    rejectPanel = `
+      <div style="background:var(--red-bg);border:1px solid #EAA0A0;border-radius:var(--radius);padding:16px;margin-bottom:16px;">
+        <div style="font-weight:700;color:var(--red);margin-bottom:6px;">❌ 退回原因</div>
+        <div style="font-size:13px;">${s.reviewNote}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px;">審查員：${s.reviewedBy||'-'} · ${formatDate(s.reviewedAt)}</div>
+      </div>`;
+  }
+  if (s.status === 'approved') {
+    rejectPanel = `
+      <div style="background:var(--green-bg);border:1px solid #9ACDB3;border-radius:var(--radius);padding:16px;margin-bottom:16px;">
+        <div style="font-weight:700;color:var(--green);margin-bottom:4px;">✅ 文案已核准</div>
+        ${s.reviewNote ? `<div style="font-size:13px;">${s.reviewNote}</div>` : ''}
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;">${formatDate(s.reviewedAt)}</div>
+      </div>`;
+  }
+
+  // 審核決定面板（僅審查員且狀態為 pending_human）
+  let decisionPanel = '';
+  const isMySubmission = s.assignedReviewerId === currentUser.id;
+  const canReview = ['legal_reviewer','copy_reviewer'].includes(currentUser.role) && s.status === 'pending_human' && isMySubmission;
+
+  if (canReview) {
+    decisionPanel = `
+      <div class="decision-panel">
+        <h3>📋 審核決定</h3>
+        <div class="decision-actions">
+          <div class="action-card" id="action-approve" onclick="selectAction('approve')">
+            <div class="action-icon">✅</div>
+            <div class="action-label">核准</div>
+            <div class="action-desc">文案符合法規標準</div>
+          </div>
+          <div class="action-card" id="action-reject" onclick="selectAction('reject')">
+            <div class="action-icon">❌</div>
+            <div class="action-label">退回修改</div>
+            <div class="action-desc">需修改後重送</div>
+          </div>
+        </div>
+        <div id="review-note-area" style="margin-top:16px;display:none;">
+          <div class="form-group">
+            <label>備註 <span id="review-note-required" class="required" style="display:none;">*（退回必填）</span></label>
+            <textarea class="form-input" id="review-note-input" rows="3" placeholder="填寫審核意見或退回原因..."></textarea>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:12px;gap:10px;">
+            <button class="btn btn-outline" onclick="resetDecision()">取消</button>
+            <button class="btn btn-primary" id="btn-submit-decision" onclick="submitDecision()">確認送出</button>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // PM 可重送
+  let resubmitPanel = '';
+  if (currentUser.role === 'pm' && (s.status === 'rejected' || s.status === 'ai_rejected')) {
+    resubmitPanel = `
+      <div style="margin-top:16px;text-align:right;">
+        <button class="btn btn-primary" onclick="resubmit('${s.id}')">🔄 修改後重送</button>
+      </div>`;
+  }
+
+  document.getElementById('detail-content').innerHTML = `
+    ${rejectPanel}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+      <div>
+        <div class="ai-result-panel">
+          <div class="ai-result-header">
+            <h3>🤖 AI 審查結果</h3>
+            ${riskBadge(s.aiRisk)}
+          </div>
+          <div class="ai-result-body">
+            ${s.aiSummary ? `<div style="background:var(--surface2);border-radius:6px;padding:10px;margin-bottom:12px;font-size:13px;"><strong>總結：</strong>${s.aiSummary}</div>` : ''}
+            ${flagsHtml || '<div class="empty-state" style="padding:24px;"><div class="empty-icon">✅</div><div class="empty-title">無違規詞彙</div></div>'}
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="ai-result-panel">
+          <div class="ai-result-header"><h3>📄 文案內容</h3></div>
+          <div class="ai-result-body">
+            <div class="highlighted-text">${highlighted}</div>
+          </div>
+        </div>
+        <div class="ai-result-panel" style="margin-top:12px;">
+          <div class="ai-result-header"><h3>ℹ️ 基本資訊</h3></div>
+          <div class="ai-result-body" style="padding:0;">
+            <div class="info-row"><span class="info-label">分類</span><span class="info-value">${ct ? copyTypeBadge(ct) : '-'}</span></div>
+            <div class="info-row"><span class="info-label">產品類型</span><span class="info-value">${PRODUCT_LABELS[s.productType]||s.productType||'-'}</span></div>
+            <div class="info-row"><span class="info-label">指派審查員</span><span class="info-value">${s.assignedReviewerName||'-'}</span></div>
+            <div class="info-row"><span class="info-label">版本</span><span class="info-value">v${s.version||1}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    ${decisionPanel}
+    ${resubmitPanel}
+  `;
+}
+
+let selectedAction = null;
+function selectAction(action) {
+  selectedAction = action;
+  document.getElementById('action-approve').className = 'action-card' + (action==='approve' ? ' selected-approve' : '');
+  document.getElementById('action-reject').className = 'action-card' + (action==='reject' ? ' selected-reject' : '');
+  document.getElementById('review-note-area').style.display = 'block';
+  const reqEl = document.getElementById('review-note-required');
+  if (reqEl) reqEl.style.display = action === 'reject' ? 'inline' : 'none';
+  document.getElementById('review-note-input').placeholder = action==='reject' ? '請填寫退回原因（必填）...' : '填寫審核備註（選填）...';
+}
+
+function resetDecision() {
+  selectedAction = null;
+  document.getElementById('action-approve').className = 'action-card';
+  document.getElementById('action-reject').className = 'action-card';
+  document.getElementById('review-note-area').style.display = 'none';
+  document.getElementById('review-note-input').value = '';
+}
+
+async function submitDecision() {
+  if (!selectedAction) { toast('請選擇核准或退回', 'warning'); return; }
+  const note = document.getElementById('review-note-input').value.trim();
+  if (selectedAction === 'reject' && !note) {
+    toast('退回時必須填寫退回原因', 'error');
+    document.getElementById('review-note-input').focus();
+    return;
+  }
+
+  const newStatus = selectedAction === 'approve' ? 'approved' : 'rejected';
+  const updates = {
+    id: currentSubmission.id,
+    status: newStatus,
+    reviewedBy: currentUser.name,
+    reviewedAt: new Date().toISOString(),
+    reviewDecision: selectedAction,
+    reviewNote: note,
+  };
+
+  showLoading('提交審核決定...');
+  try {
+    if (GAS_URL) {
+      await gasRequest('updateSubmission', updates);
+    } else {
+      const idx = mockSubmissions.findIndex(s=>s.id===currentSubmission.id);
+      if (idx>=0) Object.assign(mockSubmissions[idx], updates);
+      saveMockData();
+    }
+    hideLoading();
+    toast(selectedAction==='approve' ? '✅ 文案已核准！' : '❌ 文案已退回，已通知 PM', 'success');
+    goBack();
+  } catch(e) {
+    hideLoading();
+    toast('提交失敗：' + e.message, 'error');
+  }
+}
+
+// ─────────────────────────────────────────
+// 重送
+// ─────────────────────────────────────────
+function resubmit(id) {
+  const sub = allSubmissions.find(s=>s.id===id) || mockSubmissions.find(s=>s.id===id);
+  if (!sub) return;
+  // 導向提交頁並預填資料
+  navigateTo('pm-submit');
+  setTimeout(() => {
+    document.getElementById('sub-title').value = sub.title + '（重送）';
+    document.getElementById('sub-copy-type').value = sub.copyTypeId;
+    document.getElementById('sub-product-type').value = sub.productType;
+    document.getElementById('sub-copy-text').value = sub.copyText;
+    document.getElementById('sub-resubmit-note').value = `重送自 ${sub.id}`;
+    toast('已預填原文案資料，請修改後執行 AI 審查', 'warning', 4000);
+  }, 300);
+}
+
+// ─────────────────────────────────────────
+// 管理者
+// ─────────────────────────────────────────
+async function loadAdminDashboard() {
+  showLoading('載入儀表板...');
+  let subs = [];
+  try {
+    if (GAS_URL) subs = await gasRequest('getSubmissions', {}) || [];
+    else subs = mockSubmissions;
+  } catch(e) { subs = mockSubmissions; }
+
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const pending = subs.filter(s=>s.status==='pending_human').length;
+  const monthly = subs.filter(s=>['approved','rejected'].includes(s.status) && s.reviewedAt && new Date(s.reviewedAt)>=monthStart);
+  const approved = monthly.filter(s=>s.status==='approved').length;
+  const rejected = monthly.filter(s=>s.status==='rejected').length;
+
+  document.getElementById('admin-stats-grid').innerHTML = `
+    <div class="stat-card"><div class="stat-label">待審核</div><div class="stat-value yellow">${pending}</div></div>
+    <div class="stat-card"><div class="stat-label">本月已審</div><div class="stat-value accent">${monthly.length}</div></div>
+    <div class="stat-card"><div class="stat-label">本月核准</div><div class="stat-value green">${approved}</div></div>
+    <div class="stat-card"><div class="stat-label">本月退回</div><div class="stat-value red">${rejected}</div></div>
+  `;
+
+  // 逾時
+  const overdue = subs.filter(s=>s.status==='pending_human' && s.assignedAt && (now-new Date(s.assignedAt))>86400000);
+  const overdueEl = document.getElementById('overdue-list');
+  overdueEl.innerHTML = overdue.length ? overdue.map(s=>{
+    const hours = Math.floor((now-new Date(s.assignedAt))/3600000);
+    return `<div class="overdue-item"><div><strong>${s.title}</strong><br><span style="font-size:11px;">${s.assignedReviewerName||'-'}</span></div><div style="color:var(--red);font-weight:700;">${hours}h</div></div>`;
+  }).join('') : '<div style="color:var(--text3);font-size:13px;">✅ 無逾時文案</div>';
+
+  // 審查員負荷
+  const loads = {};
+  subs.filter(s=>s.status==='pending_human').forEach(s=>{
+    if (!s.assignedReviewerName) return;
+    if (!loads[s.assignedReviewerName]) loads[s.assignedReviewerName] = 0;
+    loads[s.assignedReviewerName]++;
+  });
+  const maxLoad = Math.max(...Object.values(loads), 1);
+  document.getElementById('reviewer-loads').innerHTML = Object.entries(loads).map(([name, count])=>`
+    <div class="load-bar-wrap">
+      <div class="load-bar-info"><span>${name}</span><span style="font-weight:700;">${count} 件</span></div>
+      <div class="load-bar"><div class="load-bar-fill ${count>8?'danger':count>5?'heavy':''}" style="width:${(count/maxLoad*100).toFixed(0)}%"></div></div>
+    </div>
+  `).join('') || '<div style="color:var(--text3);font-size:13px;">無待審文案</div>';
+
+  hideLoading();
+}
+
+async function loadAllSubmissions() {
+  showLoading('載入文案...');
+  let subs = [];
+  try {
+    if (GAS_URL) subs = await gasRequest('getSubmissions', {}) || [];
+    else subs = mockSubmissions;
+  } catch(e) { subs = mockSubmissions; }
+  allSubmissions = subs;
+
+  // 填入分類篩選器
+  const filterType = document.getElementById('filter-type');
+  if (filterType) {
+    filterType.innerHTML = '<option value="">全部分類</option>' +
+      copyTypes.map(ct=>`<option value="${ct.id}">${ct.name}</option>`).join('');
+  }
+
+  renderAdminSubmissions(subs);
+  hideLoading();
+}
+
+function filterSubmissions() {
+  const status = document.getElementById('filter-status').value;
+  const typeId = document.getElementById('filter-type').value;
+  let subs = allSubmissions;
+  if (status) subs = subs.filter(s=>s.status===status);
+  if (typeId) subs = subs.filter(s=>s.copyTypeId===typeId);
+  renderAdminSubmissions(subs);
+}
+
+function renderAdminSubmissions(subs) {
+  const tbody = document.getElementById('admin-submissions-tbody');
+  if (!subs.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">無符合條件的文案</div></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = subs.sort((a,b)=>new Date(b.submittedAt)-new Date(a.submittedAt)).map(s=>{
+    const ct = getCopyType(s.copyTypeId);
+    return `<tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px;">
+          ${ct ? copyTypeBadge(ct) : ''}
+          <span class="table-link" onclick="openDetail('${s.id}')">${s.title}</span>
+        </div>
+      </td>
+      <td>${ct?.name||'-'}</td>
+      <td style="font-size:12px;">${s.submittedByName||'-'}</td>
+      <td>${riskBadge(s.aiRisk)}</td>
+      <td>${statusBadge(s.status)}</td>
+      <td style="font-size:12px;">${s.assignedReviewerName||'-'}</td>
+      <td style="font-size:12px;color:var(--text2);">${timeAgo(s.submittedAt)}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="openDetail('${s.id}')">查看</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────
+// 文案分類管理
+// ─────────────────────────────────────────
+function renderCopyTypesPage() {
+  const list = document.getElementById('copy-types-list');
+  list.innerHTML = mockCopyTypes.map(ct=>`
+    <div class="settings-section">
+      <div class="settings-section-header" style="opacity:${ct.isActive?1:.5};">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:14px;height:14px;border-radius:4px;background:${ct.color};"></div>
+          ${copyTypeBadge(ct)}
+          <span style="font-size:12px;color:var(--text3);font-family:monospace;">${ct.code}</span>
+          ${!ct.isActive ? '<span style="font-size:11px;color:var(--text3);">（已停用）</span>' : ''}
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span style="font-size:12px;color:var(--text2);">審查員：${ct.assignedReviewerName||'-'}</span>
+          <button class="btn btn-outline btn-sm" onclick="editCopyType('${ct.id}')">編輯</button>
+          ${ct.isActive ? `<button class="btn btn-outline btn-sm" onclick="toggleCopyType('${ct.id}',false)" style="color:var(--red);">停用</button>` : `<button class="btn btn-outline btn-sm" onclick="toggleCopyType('${ct.id}',true)">啟用</button>`}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showAddCopyType() {
+  const name = prompt('分類名稱：');
+  if (!name) return;
+  const code = prompt('代碼（英文）：', name.toLowerCase().replace(/\s/g,'_'));
+  if (!code) return;
+  const color = prompt('顏色（Hex）：', '#378ADD');
+
+  const reviewers = mockCopyTypes.length ? MOCK_USERS.filter(u=>['legal_reviewer','copy_reviewer'].includes(u.role)) : [];
+  const rNames = reviewers.map((r,i)=>`${i+1}. ${r.name}（${ROLE_LABELS[r.role]}）`).join('\n');
+  const ridx = parseInt(prompt(`選擇審查員（輸入數字）：\n${rNames}`)||'1') - 1;
+  const reviewer = reviewers[ridx] || reviewers[0];
+
+  const ct = { id: genId(), name, code, color: color||'#378ADD', assignedReviewerId: reviewer?.id||'', assignedReviewerName: reviewer?.name||'', isActive: true };
+  mockCopyTypes.push(ct);
+  saveMockData();
+  if (GAS_URL) gasRequest('addCopyType', ct).catch(()=>{});
+  renderCopyTypesPage();
+  toast('分類已新增', 'success');
+}
+
+function editCopyType(id) {
+  const ct = mockCopyTypes.find(c=>c.id===id);
+  if (!ct) return;
+  const name = prompt('分類名稱：', ct.name);
+  if (!name) return;
+  const color = prompt('顏色（Hex）：', ct.color);
+  ct.name = name;
+  ct.color = color || ct.color;
+  saveMockData();
+  if (GAS_URL) gasRequest('updateCopyType', { id, name: ct.name, color: ct.color }).catch(()=>{});
+  renderCopyTypesPage();
+  toast('已更新', 'success');
+}
+
+function toggleCopyType(id, active) {
+  const ct = mockCopyTypes.find(c=>c.id===id);
+  if (!ct) return;
+  ct.isActive = active;
+  saveMockData();
+  if (GAS_URL) gasRequest('updateCopyType', { id, isActive: active }).catch(()=>{});
+  renderCopyTypesPage();
+  toast(active ? '已啟用' : '已停用', 'success');
+}
+
+// ─────────────────────────────────────────
+// 審查員管理
+// ─────────────────────────────────────────
+function renderReviewersPage() {
+  const reviewers = MOCK_USERS.filter(u=>['legal_reviewer','copy_reviewer'].includes(u.role));
+  const tbody = document.getElementById('reviewers-tbody');
+  const loads = {};
+  mockSubmissions.filter(s=>s.status==='pending_human').forEach(s=>{
+    if (!s.assignedReviewerId) return;
+    if (!loads[s.assignedReviewerId]) loads[s.assignedReviewerId] = 0;
+    loads[s.assignedReviewerId]++;
+  });
+  tbody.innerHTML = reviewers.map(r=>`<tr>
+    <td style="font-weight:600;">${r.name}</td>
+    <td style="font-size:12px;color:var(--text2);">${r.email}</td>
+    <td>${ROLE_LABELS[r.role]}</td>
+    <td><span style="font-family:monospace;font-weight:700;${(loads[r.id]||0)>5?'color:var(--red)':'color:var(--green)'}">${loads[r.id]||0}</span></td>
+    <td><span class="status-badge status-approved">啟用中</span></td>
+  </tr>`).join('');
+}
+
+// ─────────────────────────────────────────
+// 初始化
+// ─────────────────────────────────────────
+(function init() {
+  // 恢復 session
+  const saved = sessionStorage.getItem('currentUser');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    loadCopyTypes().then(() => {
+      setupUI();
+      if (!GAS_URL) toast('⚠️ 本地模擬模式', 'warning', 3000);
+    });
+  }
+
+  // 設定提示
+  if (GAS_URL) document.getElementById('config-banner').classList.add('hidden');
+
+  // 初始填入設定值
+  if (GAS_URL) document.getElementById('gas-url-input').value = GAS_URL;
+  if (SHEET_ID) document.getElementById('sheet-id-input').value = SHEET_ID;
+
+  // 按 Enter 登入
+  document.getElementById('login-password').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+})();
+</script>
+</body>
+</html>
